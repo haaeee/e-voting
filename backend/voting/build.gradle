@@ -1,0 +1,92 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.7'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	// rest-docs
+	id 'org.asciidoctor.jvm.convert' version '3.3.2'
+}
+
+group = 'gabia.jaime'
+version = '1.0'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	// rest-docs
+	asciidoctorExtensions
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('snippetsDir', file("build/generated-snippets"))
+}
+dependencies {
+	// jpa
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// web
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// DB
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	// rest-docs
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+
+	// lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// ============= rest-docs =============
+ext {
+	snippetsDir = file('build/generated-snippets')
+}
+
+test {
+	outputs.dir snippetsDir
+	useJUnitPlatform()
+}
+
+asciidoctor {
+	configurations 'asciidoctorExtensions'
+	inputs.dir snippetsDir
+	dependsOn test
+}
+
+bootJar {
+	dependsOn asciidoctor
+	from("${asciidoctor.outputDir}/asciidoc") {
+		into 'static/docs'
+	}
+}
+
+task copyDocument(type: Copy) {
+	dependsOn asciidoctor
+	from file("build/docs/asciidoc/")
+	into file("src/main/resources/static/docs")
+}
+
+build {
+	dependsOn copyDocument
+}
+
+bootJar {
+	archiveFileName = "app.jar"
+}
+
+jar {
+	enabled = false
+}
