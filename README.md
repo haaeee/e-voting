@@ -1,92 +1,60 @@
-# Jaime-e-voting
+# ****G사 주주총회 전자 투표 시스템****
 
+## Frontend
 
+- Vue.js
 
-## Getting started
+## Backend
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- SpringBoot 2.7.7
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## 배경
 
-## Add your files
+최근 G사는 디지털 트랜스포메이션 기조에 맞춰 오프라인을 통해 진행하던 주주총회를 전자 투표 시스템을 도입하여 온라인으로 진행하려 한다.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## 목표
 
-```
-cd existing_repo
-git remote add origin http://mentoring-gitlab.gabia.com/mentee/mentee_2023.01/sandbox/jaime-e-voting.git
-git branch -M main
-git push -uf origin main
-```
+최근 G사는 디지털 트랜스포메이션 기조에 맞춰 오프라인을 통해 진행하던 주주총회를 전자 투표 시스템을 도입하여 온라인으로 진행하려 한다.
 
-## Integrate with your tools
+## 요구사항
 
-- [ ] [Set up project integrations](http://mentoring-gitlab.gabia.com/mentee/mentee_2023.01/sandbox/jaime-e-voting/-/settings/integrations)
+1. 시스템은 인증을 통해 인가된 사용자만 접근할 수 있어야 하고, 주주와 관리자가 역할을 기반으로 할 수 있는 행동이 달라져야 한다.
+2. 시스템은 안건이라고 불리는 현안에 대해 찬성, 반대 또는 기권 의사를 표명할 수 있는 투표 기능을 제공해야 한다. 안건은 관리자가 생성하거나 삭제할 수 있다.
+3. 시스템은 사용자들에게 안건 목록을 조회할 수 있는 API를 제공해야 하고, 해당 안건이 현재 투표중인지 여부와 아직 진행되지 않은 경우 다음 투표 일정을 확인할 수 있어야 한다.
+4. 투표는 관리자가 게시하거나 종료할 수 있다. 투표는 관리자가 직접 종료할 수도 있지만 투표를 게시하는 시점에 종료 시간을 통보하여 시스템이 해당 시간이 지난 후에 투표를 종료시킬 수 있어야 한다.(`스프링 배치`)
+5. 의결권은 안건에 투표할 수 있는 투표권의 개수로 한 명의 주주는 여러 개의 의결권을 갖을 수 있다.
+6. 진행 중인 투표에 의결권을 행사할 때, 주주는 보유한 의결권보다 적게 행사할 수 있다.
+7. 안건은 경영진의 요구에 따라 총 2 가지 투표 방식을 지원해야 한다. 첫 번째는 의결권 선착순 제한 경쟁이고 나머지는 제한이 없는 방식이다.
+8. 의결권 선착순 제한 경쟁은 투표에 참여하는 선착순으로 10개의 의결권만 투표에 반영하는 방식이다. 예를 들면 A 주주는 3개의 의결권이 있고, B 주주는 8개의 의결권이 있을 때, A와 B가 순서대로 투표에 참여한다면 A는 3개의 의결권을 모두 행사할 수 있고, B는 8개 중 7개의 의결권만 행사할 수 있다. 이후에 참가한 주주는 의결권 행사가 불가능하다.
+9. 제한 없는 방식은 의결권의 제한 없이 모든 주주가 자신이 가진 모든 의결권을 안건에 투표할 수 있다.
+10. 시스템은 투표 결과를 투명하게 확인할 수 있도록 투표가 완료된 안건에 대해 그 목록과 찬성, 반대, 기권의 숫자를 확인할 수 있는 API를 제공해야 한다. 관리자는 해당 API를 통해 어떤 사용자가 해당 안건에 찬성, 반대, 기권 의사 표명을 했는지 여부와 얼마나 많은 의결권을 행사했는지 확인할 수 있어야 한다.
+11. 시스템은 투표 결과가 조작되지 않음을 증명하기 위해 로그를 통한 감사를 지원해야 한다. 이를 위해 특정 사용자가 투표한 결과를 실시간으로 기록해야 한다.
+12. 시스템은 API 문서를 제공해야 한다.
+13. 상기 요구사항에 명시되지 않은 항목의 경우 개발자가 자의적으로 판단하여 개발할 수 있다.
 
-## Collaborate with your team
+## 제한사항
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+1. 요구사항 8번에 해당하는 의결권 선착순 제한 경쟁 방식은 여러 주주가 동시에 제한 경쟁에 참여하더라도 정상 동작함을 보장해야 한다. 이를 테스트 코드를 통해 검증이 가능해야 한다.
+2. 요구사항 9번에 해당하는 투표 시스템은 테스트 코드를 통해 검증할 수 있어야 한다.
+3. 버전 관리는 GIt을 사용하며, 데일리 커밋 정책이 적용되므로 구현한 기능에 대해 최소 하루에 한 번 이상 커밋을 수행 해야 한다.
 
-## Test and Deploy
+## 평가사항
 
-Use the built-in continuous integration in GitLab.
+- Database
+  - [ ] ERD
+  - [ ] 정규화
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+- API
+  - [ ] API 문서
+    - [ ] RestDocs/ Swagger
+    - [ ] Wiki 정리
+  - 프레임워크 활용도
+  - 객체 지향(SOLID, 디자인 패턴 등)
+  - AOP
 
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- Gitflow 전략
+  - main 브랜치
+    - feature
+    - chore
+  - 문서화(GitLab issue tracking)
+    - Ref: <https://docs.gitlab.com/ee/user/project/issues/>

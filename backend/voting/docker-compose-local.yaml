@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  gabia-vote-database:
+    container_name: gabia-vote-database
+    build:
+      dockerfile: Dockerfile
+      context: ./database
+    image: chungjm0711/gabia-vote-database
+    environment:
+      - MYSQL_DATABASE=vote_db
+      - MYSQL_ROOT_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - TZ=Asia/Seoul
+    volumes:
+      - ./database/config:/etc/mysql/conf.d
+    ports:
+      - "3306:3306"
