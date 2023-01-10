@@ -21,7 +21,7 @@ spring:
     activate:
       on-profile: local
   datasource:
-    url: ${SRPING-DATASOURCE-URL}
+    url: ${SPRING-DATASOURCE-URL}
     username: ${SPRING-DATASOURCE-USERNAME}
     password: ${SPRING-DATASOURCE-PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
