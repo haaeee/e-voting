@@ -6,7 +6,6 @@ import gabia.jaime.voting.global.security.MemberDetails;
 import gabia.jaime.voting.global.util.ClassUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,8 +23,7 @@ public class AgendaAdminApiController {
         this.agendaAdminService = agendaAdminService;
     }
 
-    @Secured({ "ROLE_ADMIN" })
-    @PostMapping("/api/v1/agendas")
+    @PostMapping("/api/v1/admin/agendas")
     public ResponseEntity<Void> create(@RequestBody AgendaCreateRequest agendaCreateRequest, Authentication authentication) {
         final MemberDetails memberDetails = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), MemberDetails.class);
 
