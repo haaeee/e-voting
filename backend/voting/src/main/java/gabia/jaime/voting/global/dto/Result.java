@@ -37,10 +37,4 @@ public class Result<T> {
                 .build();
     }
 
-    public String toStream() {
-        return "{" +
-                "\"code\":" + "\"" + code + "\"," +
-                "\"data\":" + null + "}";
-    }
-
 }
