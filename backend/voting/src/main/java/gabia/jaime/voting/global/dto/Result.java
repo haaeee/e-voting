@@ -38,15 +38,9 @@ public class Result<T> {
     }
 
     public String toStream() {
-        if (Objects.isNull(data)) {
-            return "{" +
-                    "\"code\":" + "\"" + code + "\"," +
-                    "\"data\":" + null + "}";
-        }
-
         return "{" +
                 "\"code\":" + "\"" + code + "\"," +
-                "\"data\":" + data + "}";
+                "\"data\":" + null + "}";
     }
 
 }
