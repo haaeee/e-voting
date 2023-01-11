@@ -40,7 +40,7 @@ public class SecurityConfig {
                                 "/api/*/members/login").permitAll()
                         .mvcMatchers("/api/*/members/join",
                                 "/api/*/members/login").permitAll()
-                        .mvcMatchers("/api/*/admins").hasRole("ROLE_ADMIN")
+//                        .antMatchers("/api/**/admins/**").hasRole("ROLE_ADMIN")
                         .anyRequest().authenticated()  // hasAnyRole("ROLE_AMDIN", "ROLE_USER")
                 )
                 .sessionManagement()
