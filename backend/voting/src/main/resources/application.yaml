@@ -4,8 +4,10 @@ spring:
     group:
       local:
         - common
+        - security
       prod:
         - common
+        - security
 
 ---
 spring:
@@ -19,9 +21,9 @@ spring:
     activate:
       on-profile: local
   datasource:
-    url: ${SRPING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${SPRING-DATASOURCE-URL}
+    username: ${SPRING-DATASOURCE-USERNAME}
+    password: ${SPRING-DATASOURCE-PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -35,9 +37,9 @@ spring:
     activate:
       on-profile: prod
   datasource:
-    url: ${SRPING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${SRPING-DATASOURCE-URL}
+    username: ${SPRING-DATASOURCE-USERNAME}
+    password: ${SPRING-DATASOURCE-PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -45,3 +47,14 @@ spring:
     open-in-view: false
     properties:
       hibernate.default_batch_fetch_size: 100
+
+---
+spring:
+  config:
+    activate:
+      on-profile: security
+
+security:
+  jwt:
+    secret-key: ${SECRET-KEY}
+    expired-time-ms: ${EXPIRED-TIME-MS}

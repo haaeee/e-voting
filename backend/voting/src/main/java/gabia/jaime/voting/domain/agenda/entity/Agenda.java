@@ -66,7 +66,7 @@ public class Agenda extends BaseEntity {
         return Agenda.builder()
                 .title(title)
                 .content(content)
-                .agendaStatus(AgendaStatus.PENDING)
+                .agendaStatus(AgendaStatus.RUNNING)
                 .issue(issue)
                 .member(member)
                 .build();

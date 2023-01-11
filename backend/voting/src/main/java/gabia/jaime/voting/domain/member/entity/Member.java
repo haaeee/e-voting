@@ -2,7 +2,6 @@ package gabia.jaime.voting.domain.member.entity;
 
 import gabia.jaime.voting.domain.vote.entity.Vote;
 import gabia.jaime.voting.global.entity.BaseEntity;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -20,6 +19,8 @@ import java.util.Set;
 })
 @Getter @ToString(callSuper = true)
 public class Member extends BaseEntity {
+
+    public static final int ADMIN_RIGHT_COUNT = 0;
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,7 +47,7 @@ public class Member extends BaseEntity {
     protected Member() {
     }
 
-    @Builder(access = AccessLevel.PRIVATE)
+    @Builder
     private Member(Long id, String email, String password, String nickname, Integer voteRightCount, Role role) {
         this.id = id;
         this.email = email;
@@ -66,12 +67,12 @@ public class Member extends BaseEntity {
                 .build();
     }
 
-    public static Member createAdministrator(String email, String password, String nickname, Integer voteRightCount) {
+    public static Member createAdministrator(String email, String password, String nickname) {
         return Member.builder()
                 .email(email)
                 .password(password)
                 .nickname(nickname)
-                .voteRightCount(voteRightCount)
+                .voteRightCount(ADMIN_RIGHT_COUNT)
                 .role(Role.ADMIN)
                 .build();
     }
