@@ -25,7 +25,7 @@ public class MemberDetails implements UserDetails {
 
     @Override
     public List<SimpleGrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.getName()));
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

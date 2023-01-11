@@ -3,7 +3,6 @@ package gabia.jaime.voting.domain.member.service;
 import gabia.jaime.voting.domain.member.dto.response.MemberJoinResponse;
 import gabia.jaime.voting.domain.member.dto.response.MemberLoginResponse;
 import gabia.jaime.voting.domain.member.entity.Member;
-import gabia.jaime.voting.domain.member.entity.Role;
 import gabia.jaime.voting.domain.member.repository.MemberRepository;
 import gabia.jaime.voting.global.exception.badrequest.DuplicatedEmailException;
 import gabia.jaime.voting.global.exception.notfound.MemberNotFoundException;
@@ -18,6 +17,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
+import static gabia.jaime.voting.domain.member.entity.Role.*;
 import static gabia.jaime.voting.fixture.AdminFixture.*;
 import static gabia.jaime.voting.fixture.MemberFixture.MEMBER_1;
 import static gabia.jaime.voting.fixture.MemberFixture.MEMBER_2;
@@ -60,7 +60,7 @@ class AuthServiceTest {
         assertAll(
                 () -> assertThat(joinResponse.getId()).isEqualTo(1L),
                 () -> assertThat(joinResponse.getEmail()).isEqualTo("member1@email.com"),
-                () -> assertThat(joinResponse.getRole()).isEqualTo(Role.SHAREHOLDER)
+                () -> assertThat(joinResponse.getRole()).isEqualTo(ROLE_SHAREHOLDER)
         );
     }
 
@@ -80,7 +80,7 @@ class AuthServiceTest {
         assertAll(
                 () -> assertThat(joinResponse.getId()).isEqualTo(1L),
                 () -> assertThat(joinResponse.getEmail()).isEqualTo("admin1@email.com"),
-                () -> assertThat(joinResponse.getRole()).isEqualTo(Role.ADMIN)
+                () -> assertThat(joinResponse.getRole()).isEqualTo(ROLE_ADMIN)
         );
     }
 

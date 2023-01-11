@@ -4,11 +4,13 @@ import gabia.jaime.voting.domain.member.entity.Member;
 import gabia.jaime.voting.domain.member.entity.Member.MemberBuilder;
 import gabia.jaime.voting.domain.member.entity.Role;
 
+import static gabia.jaime.voting.domain.member.entity.Role.ROLE_SHAREHOLDER;
+
 public enum MemberFixture {
 
-    MEMBER_1("member1@email.com", "1234", "memeber1", Role.SHAREHOLDER, 5),
-    MEMBER_2("member2@email.com", "1234", "memeber2", Role.SHAREHOLDER, 1),
-    MEMBER_3("member3@email.com", "1234", "memeber3", Role.SHAREHOLDER, 7);
+    MEMBER_1("member1@email.com", "1234", "memeber1", ROLE_SHAREHOLDER, 5),
+    MEMBER_2("member2@email.com", "1234", "memeber2", ROLE_SHAREHOLDER, 1),
+    MEMBER_3("member3@email.com", "1234", "memeber3", ROLE_SHAREHOLDER, 7);
 
     private final String email;
     private final String password;
