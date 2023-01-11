@@ -19,12 +19,16 @@ public class SecurityConfig {
     private final String secretKey;
     private final JwtTokenProvider jwtTokenProvider;
 
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
     public SecurityConfig(final AuthService authService,
                           @Value("${security.jwt.secret-key}") final String secretKey,
-                          final JwtTokenProvider jwtTokenProvider) {
+                          final JwtTokenProvider jwtTokenProvider,
+                          final CustomAuthenticationEntryPoint customAuthenticationEntryPoint) {
         this.authService = authService;
         this.secretKey = secretKey;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
     }
 
     @Bean
@@ -44,7 +48,7 @@ public class SecurityConfig {
                 .and()
                 .addFilterBefore(new JwtTokenFilter(secretKey, authService, jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
-                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .authenticationEntryPoint(customAuthenticationEntryPoint)
                 .and()
                 .build();
     }
