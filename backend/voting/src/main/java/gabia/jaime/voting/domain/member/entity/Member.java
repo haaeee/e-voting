@@ -11,6 +11,8 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static gabia.jaime.voting.domain.member.entity.Role.*;
+
 @Entity
 @Table(name = "member", indexes = {
         @Index(columnList = "email", unique = true),
@@ -63,7 +65,7 @@ public class Member extends BaseEntity {
                 .password(password)
                 .nickname(nickname)
                 .voteRightCount(voteRightCount)
-                .role(Role.SHAREHOLDER)
+                .role(ROLE_SHAREHOLDER)
                 .build();
     }
 
@@ -73,7 +75,7 @@ public class Member extends BaseEntity {
                 .password(password)
                 .nickname(nickname)
                 .voteRightCount(ADMIN_RIGHT_COUNT)
-                .role(Role.ADMIN)
+                .role(ROLE_ADMIN)
                 .build();
     }
 
