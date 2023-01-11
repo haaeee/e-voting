@@ -38,10 +38,7 @@ public class SecurityConfig {
                         .mvcMatchers(
                                 "/api/*/members/join",
                                 "/api/*/members/login").permitAll()
-                        .mvcMatchers("/api/*/members/join",
-                                "/api/*/members/login").permitAll()
-                        .antMatchers("/api/**/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()  // hasAnyRole("ROLE_AMDIN", "ROLE_USER")
+                        .antMatchers("/api/**/agendas", "/api/**/votes", "api/**/issues/").authenticated()
                 )
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
