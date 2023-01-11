@@ -1,7 +1,6 @@
 package gabia.jaime.voting.global.security;
 
 import gabia.jaime.voting.domain.member.service.AuthService;
-import gabia.jaime.voting.global.exception.unauthorized.TokenExpiredException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,20 +36,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (Objects.isNull(header) || !header.startsWith((TOKEN_TYPE))) {
-            final String requestUrl = request.getRequestURL().toString();
-            if (!requestUrl.endsWith("login") && !requestUrl.endsWith("join")) {
-                log.error("Error occurs while getting header. Header is null or invalid {}", request.getRequestURL());
-            }
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
             final String token = header.split(" ")[1].trim();
-
-            if (jwtTokenProvider.isTokenExpired(token, secretKey)) {
-                throw new TokenExpiredException();
-            }
 
             String username = jwtTokenProvider.getUsername(token, secretKey);
             MemberDetails memberDetails = authService.loadMemberByEmail(username);
@@ -68,7 +59,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         } catch (RuntimeException e) {
-            log.error("Error occurs while validation. {}", e.toString());
             filterChain.doFilter(request, response);
             return;
         }
