@@ -44,11 +44,12 @@ public class Agenda extends BaseEntity {
     }
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Agenda(Long id, String title, String content, AgendaStatus agendaStatus, Member member) {
+    private Agenda(Long id, String title, String content, AgendaStatus agendaStatus, Issue issue, Member member) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.agendaStatus = agendaStatus;
+        this.issue = issue;
         this.member = member;
     }
 
@@ -61,11 +62,12 @@ public class Agenda extends BaseEntity {
                 .build();
     }
 
-    public static Agenda createRunningAgenda(String title, String content, Member member) {
+    public static Agenda createRunningAgenda(String title, String content, Issue issue, Member member) {
         return Agenda.builder()
                 .title(title)
                 .content(content)
                 .agendaStatus(AgendaStatus.RUNNING)
+                .issue(issue)
                 .member(member)
                 .build();
     }

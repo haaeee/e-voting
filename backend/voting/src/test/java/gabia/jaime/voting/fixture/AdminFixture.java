@@ -4,12 +4,10 @@ import gabia.jaime.voting.domain.member.entity.Member;
 import gabia.jaime.voting.domain.member.entity.Member.MemberBuilder;
 import gabia.jaime.voting.domain.member.entity.Role;
 
-import static gabia.jaime.voting.domain.member.entity.Role.ROLE_ADMIN;
-
 public enum AdminFixture {
 
-    ADMIN1("admin1@email.com", "{noop}1234", "amdin1", ROLE_ADMIN),
-    ADMIN2("admin2@email.com", "{noop}1234", "admin2", ROLE_ADMIN);
+    ADMIN1("admin1@email.com", "{noop}1234", "amdin1", Role.ADMIN),
+    ADMIN2("admin2@email.com", "{noop}1234", "admin2", Role.ADMIN);
 
     private final String email;
     private final String password;

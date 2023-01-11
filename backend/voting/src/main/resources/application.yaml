@@ -26,15 +26,11 @@ spring:
     password: ${SPRING-DATASOURCE-PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
-    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
     open-in-view: false
     properties:
       hibernate.default_batch_fetch_size: 100
-  sql:
-    init:
-      mode: always
 ---
 spring:
   config:
