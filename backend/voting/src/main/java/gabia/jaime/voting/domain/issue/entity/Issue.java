@@ -2,8 +2,8 @@ package gabia.jaime.voting.domain.issue.entity;
 
 import gabia.jaime.voting.domain.agenda.entity.Agenda;
 import gabia.jaime.voting.domain.vote.entity.Vote;
+import gabia.jaime.voting.domain.vote.entity.VoteType;
 import gabia.jaime.voting.global.entity.BaseEntity;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import static gabia.jaime.voting.domain.issue.entity.IssueStatus.CLOSE;
+import static gabia.jaime.voting.domain.issue.entity.IssueStatus.OPEN;
+import static gabia.jaime.voting.domain.vote.entity.VoteType.*;
 
 @Entity
 @Table(name = "issue")
@@ -26,6 +28,7 @@ public class Issue extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ToString.Exclude
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "agenda_id", nullable = false)
     private Agenda agenda;
@@ -44,7 +47,7 @@ public class Issue extends BaseEntity {
     @Column(name = "end_at", nullable = false)
     private LocalDateTime endAt;
 
-    @Column(name = "yse_count", nullable = false)
+    @Column(name = "yes_count", nullable = false)
     private int yesCount;
 
     @Column(name = "no_count", nullable = false)
@@ -71,28 +74,15 @@ public class Issue extends BaseEntity {
         this.startAt = startAt;
         this.endAt = endAt;
         this.yesCount = yesCount;
-        this.noCount = yesCount;
-        this.giveUpCount = yesCount;
+        this.noCount = noCount;
+        this.giveUpCount = giveUpCount;
     }
 
-    public static Issue createLimitedIssue(Agenda agenda, LocalDateTime startAt, LocalDateTime endAt) {
+    public static Issue of(Agenda agenda, IssueType issueType, LocalDateTime startAt, LocalDateTime endAt) {
         return Issue.builder()
                 .agenda(agenda)
-                .issueType(IssueType.LIMITED)
-                .issueStatus(IssueStatus.OPEN)
-                .startAt(startAt)
-                .endAt(endAt)
-                .yesCount(0)
-                .noCount(0)
-                .giveUpCount(0)
-                .build();
-    }
-
-    public static Issue createNoLimitedIssue(Agenda agenda, LocalDateTime startAt, LocalDateTime endAt) {
-        return Issue.builder()
-                .agenda(agenda)
-                .issueType(IssueType.NO_LIMITED)
-                .issueStatus(IssueStatus.OPEN)
+                .issueType(issueType)
+                .issueStatus(OPEN)
                 .startAt(startAt)
                 .endAt(endAt)
                 .yesCount(0)
@@ -103,10 +93,27 @@ public class Issue extends BaseEntity {
 
     public void close() {
         this.issueStatus = CLOSE;
+        this.agenda.changeCompletedStatus();
     }
 
     public int getAvailableCount() {
         return VALID_VOTE_COUNT - (yesCount + noCount + giveUpCount);
+    }
+
+    public int getTotalVoteCount() {
+        return yesCount + noCount + giveUpCount;
+    }
+
+    public void addVoteCount(final VoteType voteType, int voteCount) {
+        if (voteType == YES) {
+            this.yesCount += voteCount;
+        }
+        else if (voteType == NO) {
+            this.noCount += voteCount;
+        }
+        else if (voteType == GIVE_UP) {
+            this.giveUpCount += voteCount;
+        }
     }
 
     @Override
