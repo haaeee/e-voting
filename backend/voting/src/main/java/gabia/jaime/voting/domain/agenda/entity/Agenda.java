@@ -3,9 +3,6 @@ package gabia.jaime.voting.domain.agenda.entity;
 import gabia.jaime.voting.domain.issue.entity.Issue;
 import gabia.jaime.voting.domain.member.entity.Member;
 import gabia.jaime.voting.global.entity.BaseEntity;
-import gabia.jaime.voting.global.exception.CustomException;
-import gabia.jaime.voting.global.exception.badrequest.BeforeIssueException;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -43,7 +40,7 @@ public class Agenda extends BaseEntity {
     protected Agenda() {
     }
 
-    @Builder(access = AccessLevel.PRIVATE)
+    @Builder
     private Agenda(Long id, String title, String content, AgendaStatus agendaStatus, Member member) {
         this.id = id;
         this.title = title;
@@ -52,41 +49,24 @@ public class Agenda extends BaseEntity {
         this.member = member;
     }
 
-    public static Agenda createPendingAgenda(String title, String content, Member member) {
+    public static Agenda of(String title, String content, AgendaStatus agendaStatus, Member member) {
         return Agenda.builder()
                 .title(title)
                 .content(content)
-                .agendaStatus(AgendaStatus.PENDING)
-                .member(member)
-                .build();
-    }
-
-    public static Agenda createRunningAgenda(String title, String content, Member member) {
-        return Agenda.builder()
-                .title(title)
-                .content(content)
-                .agendaStatus(AgendaStatus.RUNNING)
+                .agendaStatus(agendaStatus)
                 .member(member)
                 .build();
     }
 
     public void changeRunningStatus(Issue issue) {
-        validateIssue();
         this.issue = issue;
         this.agendaStatus = AgendaStatus.RUNNING;
     }
 
     public void changeCompletedStatus() {
-        validateIssue();
-        // TODO: 이슈도 상태 여기서 책임질지 고민
         this.agendaStatus = AgendaStatus.COMPLETED;
     }
 
-    private void validateIssue(){
-        if (Objects.isNull(issue)) {
-            throw new BeforeIssueException();
-        }
-    }
 
     @Override
     public boolean equals(Object o) {
