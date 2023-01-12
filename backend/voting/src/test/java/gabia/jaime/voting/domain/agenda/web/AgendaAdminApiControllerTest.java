@@ -19,9 +19,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import static gabia.jaime.voting.domain.agenda.entity.AgendaStatus.PENDING;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-//import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-//import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,10 +60,10 @@ class AgendaAdminApiControllerTest {
         );
 
         // then
-//        resultActions.andExpect(status().isCreated())
-//                .andDo(print())
-//                .andDo(
-//                        document("agendas-create")
-//                );
+        resultActions.andExpect(status().isCreated())
+                .andDo(print())
+                .andDo(
+                        document("agendas-create")
+                );
     }
 }
