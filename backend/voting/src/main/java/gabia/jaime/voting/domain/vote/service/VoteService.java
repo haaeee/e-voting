@@ -1,6 +1,6 @@
 package gabia.jaime.voting.domain.vote.service;
 
-import gabia.jaime.voting.domain.issue.dto.request.VoteCreateRequest;
+import gabia.jaime.voting.domain.vote.dto.request.VoteCreateRequest;
 import gabia.jaime.voting.domain.issue.entity.Issue;
 import gabia.jaime.voting.domain.issue.reposioty.IssueRepository;
 import gabia.jaime.voting.domain.member.entity.Member;
