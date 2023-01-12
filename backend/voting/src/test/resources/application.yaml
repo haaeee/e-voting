@@ -7,9 +7,14 @@ spring:
     properties:
       hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
       hibernate.default_batch_fetch_size: 100
+#  datasource:
+#    url: jdbc:h2:mem:testdb;MODE=MySQL;
+#    driver-class-name: org.h2.Driver
   datasource:
-    url: jdbc:h2:mem:testdb;MODE=MySQL;
-    driver-class-name: org.h2.Driver
+    url: ${SPRING-DATASOURCE-URL}
+    username: ${SPRING-DATASOURCE-USERNAME}
+    password: ${SPRING-DATASOURCE-PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
       mode: always

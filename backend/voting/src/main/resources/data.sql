@@ -1,9 +1,21 @@
 insert into member (email, password, nickname, vote_right_count, role, created_at, modified_at)
-values ('member1@email.com', '{noop}asdf1234!@#$', 'shareholder_1', 5, 'ROLE_SHAREHOLDER', now(), now())
+values ('member1@email.com', '{noop}asdf1234!@#$', 'shareholder_1', 2, 'ROLE_SHAREHOLDER', now(), now())
 ;
 
 insert into member (email, password, nickname, vote_right_count, role, created_at, modified_at)
-values ('member2@email.com', '{noop}asdf1234!@#$', 'shareholder_2', 7, 'ROLE_SHAREHOLDER', now(), now())
+values ('member2@email.com', '{noop}asdf1234!@#$', 'shareholder_2', 2, 'ROLE_SHAREHOLDER', now(), now())
+;
+
+insert into member (email, password, nickname, vote_right_count, role, created_at, modified_at)
+values ('member3@email.com', '{noop}asdf1234!@#$', 'shareholder_3', 2, 'ROLE_SHAREHOLDER', now(), now())
+;
+
+insert into member (email, password, nickname, vote_right_count, role, created_at, modified_at)
+values ('member4@email.com', '{noop}asdf1234!@#$', 'shareholder_4', 2, 'ROLE_SHAREHOLDER', now(), now())
+;
+
+insert into member (email, password, nickname, vote_right_count, role, created_at, modified_at)
+values ('member5@email.com', '{noop}asdf1234!@#$', 'shareholder_5', 3, 'ROLE_SHAREHOLDER', now(), now())
 ;
 
 insert into member (email, password, nickname, vote_right_count, role, created_at, modified_at)
@@ -16,15 +28,15 @@ values ('admin2@email.com', '{noop}asdf1234!@#$', 'admin2', 0, 'ROLE_ADMIN', now
 
 -- 안건 sample data
 insert into agenda (title, content, agenda_status, member_id, created_at, modified_at)
-values ('안건1', '일주일에 1번의 회의를 진행하려고합니다.', 'RUNNING', 3, now(), now())
+values ('안건1', '일주일에 1번의 회의를 진행하려고합니다.', 'RUNNING', 6, now(), now())
 ;
 
 insert into agenda (title, content, agenda_status, member_id, created_at, modified_at)
-values ('안건2', '일주일에 2번의 회의를 진행하려고합니다.', 'RUNNING', 3, now(), now())
+values ('안건2', '일주일에 2번의 회의를 진행하려고합니다.', 'RUNNING', 6, now(), now())
 ;
 
 insert into agenda (title, content, agenda_status, member_id, created_at, modified_at)
-values ('안건3', '내년에 계획을 오늘 수립하는 것은 어떨까요.', 'PENDING', 3, now(), now())
+values ('안건3', '내년에 계획을 오늘 수립하는 것은 어떨까요.', 'PENDING', 6, now(), now())
 ;
 
 
