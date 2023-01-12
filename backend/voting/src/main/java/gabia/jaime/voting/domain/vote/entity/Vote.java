@@ -51,27 +51,9 @@ public class Vote {
         this.member = member;
     }
 
-    public static Vote createYes(Issue issue, Member member, int voteCount) {
+    public static Vote of(VoteType voteType, int voteCount, Issue issue, Member member) {
         return Vote.builder()
-                .voteType(VoteType.YES)
-                .voteCount(voteCount)
-                .issue(issue)
-                .member(member)
-                .build();
-    }
-
-    public static Vote createNo(Issue issue, Member member, int voteCount) {
-        return Vote.builder()
-                .voteType(VoteType.NO)
-                .voteCount(voteCount)
-                .issue(issue)
-                .member(member)
-                .build();
-    }
-
-    public static Vote createGiveUp(Issue issue, Member member, int voteCount) {
-        return Vote.builder()
-                .voteType(VoteType.GIVE_UP)
+                .voteType(voteType)
                 .voteCount(voteCount)
                 .issue(issue)
                 .member(member)
