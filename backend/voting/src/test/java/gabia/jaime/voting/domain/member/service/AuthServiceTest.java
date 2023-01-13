@@ -4,7 +4,7 @@ import gabia.jaime.voting.domain.member.dto.response.MemberJoinResponse;
 import gabia.jaime.voting.domain.member.dto.response.MemberLoginResponse;
 import gabia.jaime.voting.domain.member.entity.Member;
 import gabia.jaime.voting.domain.member.repository.MemberRepository;
-import gabia.jaime.voting.global.exception.badrequest.DuplicatedEmailException;
+import gabia.jaime.voting.global.exception.conflict.DuplicatedEmailException;
 import gabia.jaime.voting.global.exception.notfound.MemberNotFoundException;
 import gabia.jaime.voting.global.security.JwtTokenProvider;
 import org.junit.jupiter.api.Test;

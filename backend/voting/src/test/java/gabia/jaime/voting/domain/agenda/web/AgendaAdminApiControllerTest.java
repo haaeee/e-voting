@@ -53,7 +53,7 @@ class AgendaAdminApiControllerTest {
 
         // when
         final ResultActions resultActions = mockMvc.perform(
-                post("/api/v1/admin/agendas")
+                post("/api/v1/agendas")
                         .header(HttpHeaders.AUTHORIZATION, authorizationHeader)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(agendaCreateRequest))

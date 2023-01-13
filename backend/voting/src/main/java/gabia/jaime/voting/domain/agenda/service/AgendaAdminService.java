@@ -7,14 +7,13 @@ import gabia.jaime.voting.domain.agenda.entity.Agenda;
 import gabia.jaime.voting.domain.agenda.entity.AgendaStatus;
 import gabia.jaime.voting.domain.agenda.repository.AgendaRepository;
 import gabia.jaime.voting.domain.issue.entity.Issue;
-import gabia.jaime.voting.domain.issue.entity.IssueType;
 import gabia.jaime.voting.domain.issue.reposioty.IssueRepository;
 import gabia.jaime.voting.domain.member.entity.Member;
 import gabia.jaime.voting.domain.member.entity.Role;
 import gabia.jaime.voting.domain.member.repository.MemberRepository;
-import gabia.jaime.voting.global.exception.badrequest.BadRequestException;
+import gabia.jaime.voting.global.exception.conflict.BeforeIssueException;
+import gabia.jaime.voting.global.exception.forbidden.AdminForbiddenException;
 import gabia.jaime.voting.global.exception.notfound.MemberNotFoundException;
-import gabia.jaime.voting.global.exception.unauthorized.UnAuthorizedException;
 import gabia.jaime.voting.global.security.MemberDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,26 +38,23 @@ public class AgendaAdminService {
 
         final Member adminMember = findMember(memberDetails.getEmail());
 
+        // Completed는 생성할 수 없다.
         if (agendaCreateRequest.getAgendaStatus() == AgendaStatus.COMPLETED) {
-            // TODO
-            throw new BadRequestException("올바르지 않은 요청입니다.");
+            throw new BeforeIssueException();
         }
+
+        // Pending
         if (agendaCreateRequest.getAgendaStatus() == AgendaStatus.PENDING) {
-            final Agenda pendingAgenda = Agenda.createPendingAgenda(agendaCreateRequest.getTitle(), agendaCreateRequest.getContent(), adminMember);
+            final Agenda pendingAgenda =
+                    Agenda.of(agendaCreateRequest.getTitle(), agendaCreateRequest.getContent(), agendaCreateRequest.getAgendaStatus(), adminMember);
             return agendaRepository.save(pendingAgenda).getId();
         }
 
         // Running Agenda 생성
-        final IssueType issueType = agendaCreateRequest.getIssueType();
-        final Agenda runningAgenda;
-        final Issue runningIssue;
-        if (issueType == IssueType.LIMITED) {
-            runningAgenda = Agenda.createRunningAgenda(agendaCreateRequest.getTitle(), agendaCreateRequest.getContent(), adminMember);
-            runningIssue = Issue.createLimitedIssue(runningAgenda, agendaCreateRequest.getStartAt(), agendaCreateRequest.getEndAt());
-        } else {
-            runningAgenda = Agenda.createRunningAgenda(agendaCreateRequest.getTitle(), agendaCreateRequest.getContent(), adminMember);
-            runningIssue = Issue.createNoLimitedIssue(runningAgenda, agendaCreateRequest.getStartAt(), agendaCreateRequest.getEndAt());
-        }
+        final Agenda runningAgenda =
+                Agenda.of(agendaCreateRequest.getTitle(), agendaCreateRequest.getContent(), agendaCreateRequest.getAgendaStatus(), adminMember);
+        final Issue runningIssue =
+                Issue.of(runningAgenda, agendaCreateRequest.getIssueType(), agendaCreateRequest.getStartAt(), agendaCreateRequest.getEndAt());
 
         agendaRepository.save(runningAgenda);
         issueRepository.save(runningIssue);
@@ -68,7 +64,7 @@ public class AgendaAdminService {
 
     private void validateAdmin(final Role role) {
         if (role != ROLE_ADMIN) {
-            throw new UnAuthorizedException("관리자만 안건을 생성할 수 있습니다.");
+            throw new AdminForbiddenException();
         }
     }
 
