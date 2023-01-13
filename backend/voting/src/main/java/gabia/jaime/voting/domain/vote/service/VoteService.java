@@ -14,6 +14,7 @@ import gabia.jaime.voting.global.exception.notfound.IssueNotFoundException;
 import gabia.jaime.voting.global.exception.notfound.MemberNotFoundException;
 import gabia.jaime.voting.global.security.MemberDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -49,24 +50,23 @@ public class VoteService {
         validateVoter(member);
         validateAlreadyVote(issue, member);
 
-
         // 선착순 투표
         if (issue.getIssueType() == LIMITED) {
             int availableCount = issue.getAvailableCount();
             int voteCount = Math.min(availableCount, member.getVoteRightCount());
             issue.addVoteCount(voteCreateRequest.getVoteType(), voteCount);
+
+            if (canCloseIssue(issue)) {
+                issue.close();
+            }
+
             return voteRepository.save(Vote.of(voteCreateRequest.getVoteType(), voteCount, issue, member)).getId();
         }
 
         // 제한이 없는 투표
         issue.addVoteCount(voteCreateRequest.getVoteType(), member.getVoteRightCount());
-        return voteRepository.save(Vote.of(voteCreateRequest.getVoteType(), member.getVoteRightCount(), issue, member)).getId();
-    }
-
-    private void validateAlreadyVote(final Issue issue, final Member member) {
-        voteRepository.findByIssueAndMember(issue, member).ifPresent(it -> {
-            throw new AlreadyVoteException();
-        });
+        return voteRepository.save(Vote.of(voteCreateRequest.getVoteType(), member.getVoteRightCount(), issue, member))
+                .getId();
     }
 
     private void validateIssue(final Issue issue) {
@@ -84,6 +84,16 @@ public class VoteService {
         if (member.getRole() != ROLE_SHAREHOLDER) {
             throw new AdminCanNotVoteException();
         }
+    }
+
+    private void validateAlreadyVote(final Issue issue, final Member member) {
+        voteRepository.findByIssueAndMember(issue, member).ifPresent(it -> {
+            throw new AlreadyVoteException();
+        });
+    }
+
+    private boolean canCloseIssue(final Issue issue) {
+        return issue.getTotalVoteCount() == Issue.VALID_VOTE_COUNT;
     }
 
     private Issue findIssueWithAgendaSelectForUpdate(final Long issueId) {

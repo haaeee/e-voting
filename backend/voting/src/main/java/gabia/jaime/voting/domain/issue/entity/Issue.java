@@ -23,7 +23,7 @@ import static gabia.jaime.voting.domain.vote.entity.VoteType.*;
 @Getter @ToString(callSuper = true)
 public class Issue extends BaseEntity {
 
-    private static final int VALID_VOTE_COUNT = 10;
+    public static final int VALID_VOTE_COUNT = 10;
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
