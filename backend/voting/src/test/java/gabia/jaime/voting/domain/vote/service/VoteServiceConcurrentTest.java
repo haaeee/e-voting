@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.DisplayNameGenerator.*;
  * <ul>
  *      <li>issue1 : 열려 있는 현안 + 기간이 남음 + 선착순</li>
  *      <li>issue2 :열려 있는 현안 + 기간이 남음 + 제한 없음</li>
- *      <li>issue3 :열려 있는 현안 + 기간이 지남 투표하려고하면 CLOSE로 issue_status 변경 및 agenda completed로</li>
+ *      <li>issue3 :열려 있는 현안 + 기간이 지남 투표 하려고 하면 예외 발생 (배치 작업)</li>
  * </ul>
  */
 @DisplayName("동시성 테스트 및 투표에 사용한 의결권 갯수 검증 테스트")

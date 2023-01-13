@@ -14,7 +14,6 @@ import gabia.jaime.voting.global.exception.notfound.IssueNotFoundException;
 import gabia.jaime.voting.global.exception.notfound.MemberNotFoundException;
 import gabia.jaime.voting.global.security.MemberDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -75,7 +74,8 @@ public class VoteService {
         }
 
         if (issue.getEndAt().isBefore(LocalDateTime.now())) {
-            issue.close();
+            // TODO: 트랜잭션 롤백되어서 반영이 안됨!
+            // issue.close();
             throw new ClosedIssueException();
         }
     }
