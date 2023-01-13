@@ -2,8 +2,8 @@ package gabia.jaime.voting.domain.issue.entity;
 
 import gabia.jaime.voting.domain.agenda.entity.Agenda;
 import gabia.jaime.voting.domain.vote.entity.Vote;
+import gabia.jaime.voting.domain.vote.entity.VoteType;
 import gabia.jaime.voting.global.entity.BaseEntity;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -14,17 +14,21 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static gabia.jaime.voting.domain.issue.entity.IssueStatus.CLOSE;
+import static gabia.jaime.voting.domain.issue.entity.IssueStatus.OPEN;
+import static gabia.jaime.voting.domain.vote.entity.VoteType.*;
+
 @Entity
 @Table(name = "issue")
 @Getter @ToString(callSuper = true)
 public class Issue extends BaseEntity {
 
-    private static final int VALID_VOTE_COUNT = 10;
-    private static final int NO_LIMITED_ISSUE_COUNT_NUMBER_FLAG = -1;
+    public static final int VALID_VOTE_COUNT = 10;
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ToString.Exclude
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "agenda_id", nullable = false)
     private Agenda agenda;
@@ -43,12 +47,14 @@ public class Issue extends BaseEntity {
     @Column(name = "end_at", nullable = false)
     private LocalDateTime endAt;
 
-    /**
-     * <p>선착순 의결권 : 10</p>
-     * <p>제한 없는 투표 : -1</p>
-     */
-    @Column(name = "vote_count", nullable = false)
-    private int voteCount;
+    @Column(name = "yes_count", nullable = false)
+    private int yesCount;
+
+    @Column(name = "no_count", nullable = false)
+    private int noCount;
+
+    @Column(name = "give_up_count", nullable = false)
+    private int giveUpCount;
 
     @ToString.Exclude
     @OrderBy("createdAt DESC")
@@ -58,37 +64,56 @@ public class Issue extends BaseEntity {
     protected Issue() {
     }
 
-    @Builder(access = AccessLevel.PRIVATE)
-    private Issue(Long id, Agenda agenda, IssueType issueType, IssueStatus issueStatus, LocalDateTime startAt, LocalDateTime endAt, int voteCount) {
+    @Builder
+    private Issue(Long id, Agenda agenda, IssueType issueType, IssueStatus issueStatus, LocalDateTime startAt, LocalDateTime endAt,
+                  int yesCount, int noCount, int giveUpCount) {
         this.id = id;
         this.agenda = agenda;
         this.issueType = issueType;
         this.issueStatus = issueStatus;
         this.startAt = startAt;
         this.endAt = endAt;
-        this.voteCount = voteCount;
+        this.yesCount = yesCount;
+        this.noCount = noCount;
+        this.giveUpCount = giveUpCount;
     }
 
-    public static Issue createLimitedIssue(Agenda agenda, LocalDateTime startAt, LocalDateTime endAt) {
+    public static Issue of(Agenda agenda, IssueType issueType, LocalDateTime startAt, LocalDateTime endAt) {
         return Issue.builder()
                 .agenda(agenda)
-                .issueType(IssueType.LIMITED)
-                .issueStatus(IssueStatus.OPEN)
+                .issueType(issueType)
+                .issueStatus(OPEN)
                 .startAt(startAt)
                 .endAt(endAt)
-                .voteCount(VALID_VOTE_COUNT)
+                .yesCount(0)
+                .noCount(0)
+                .giveUpCount(0)
                 .build();
     }
 
-    public static Issue createNoLimitedIssue(Agenda agenda, LocalDateTime startAt, LocalDateTime endAt) {
-        return Issue.builder()
-                .agenda(agenda)
-                .issueType(IssueType.NO_LIMITED)
-                .issueStatus(IssueStatus.OPEN)
-                .startAt(startAt)
-                .endAt(endAt)
-                .voteCount(NO_LIMITED_ISSUE_COUNT_NUMBER_FLAG)
-                .build();
+    public void close() {
+        this.issueStatus = CLOSE;
+        this.agenda.changeCompletedStatus();
+    }
+
+    public int getAvailableCount() {
+        return VALID_VOTE_COUNT - (yesCount + noCount + giveUpCount);
+    }
+
+    public int getTotalVoteCount() {
+        return yesCount + noCount + giveUpCount;
+    }
+
+    public void addVoteCount(final VoteType voteType, int voteCount) {
+        if (voteType == YES) {
+            this.yesCount += voteCount;
+        }
+        else if (voteType == NO) {
+            this.noCount += voteCount;
+        }
+        else if (voteType == GIVE_UP) {
+            this.giveUpCount += voteCount;
+        }
     }
 
     @Override
@@ -107,4 +132,5 @@ public class Issue extends BaseEntity {
     public int hashCode() {
         return Objects.hash(getId());
     }
+
 }

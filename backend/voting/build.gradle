@@ -2,6 +2,8 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.7'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	// rest-docs
+	id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
 group = 'gabia.jaime'
@@ -12,11 +14,18 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	// rest-docs
+	asciidoctorExtensions
 }
 
 repositories {
 	mavenCentral()
 }
+
+ext {
+	set('snippetsDir', file("build/generated-snippets"))
+}
+
 
 dependencies {
 	// jpa
@@ -40,6 +49,10 @@ dependencies {
 	// p6spy
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.1'
 
+	// rest-docs
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+
 	// querydsl
 	implementation 'com.querydsl:querydsl-jpa'
 
@@ -60,6 +73,37 @@ tasks.named('test') {
 	processResources {
 		duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
 	}
+}
+
+// ============= rest-docs =============
+ext {
+	snippetsDir = file('build/generated-snippets')
+}
+
+test {
+	outputs.dir snippetsDir
+	useJUnitPlatform()
+}
+
+asciidoctor {
+	configurations 'asciidoctorExtensions'
+	inputs.dir snippetsDir
+	dependsOn test
+}
+
+bootJar {
+	dependsOn asciidoctor
+	from("${asciidoctor.outputDir}/asciidoc") {
+		into 'static/docs'
+		processResources {
+			duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
+		}
+	}
+}
+task copyDocument(type: Copy) {
+	dependsOn asciidoctor
+	from file("build/docs/asciidoc/")
+	into file("src/main/resources/static/docs")
 }
 
 // Querydsl 설정부
