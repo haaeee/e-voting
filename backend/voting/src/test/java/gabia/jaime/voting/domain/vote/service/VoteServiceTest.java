@@ -82,8 +82,8 @@ class VoteServiceTest {
         MemberDetails adminDetails = createAdminDetails();
         final VoteCreateRequest voteCreateRequest = new VoteCreateRequest(NO);
         final Issue issue = createIssue(1L, LIMITED, OPEN, LocalDateTime.now().minusDays(2L), LocalDateTime.now().plusDays(3L), 3, 1, 2);
-        given(issueRepository.findWithAgendaByIdSelectForUpdate(issueId)).willReturn(Optional.of(issue));
         given(memberRepository.findByEmail(adminDetails.getEmail())).willReturn(Optional.of(createAdmin(1L)));
+        given(issueRepository.findWithAgendaByIdSelectForUpdate(issueId)).willReturn(Optional.of(issue));
 
         // when
         Throwable t = catchThrowable(() -> sut.vote(adminDetails, voteCreateRequest, issueId));
@@ -101,8 +101,8 @@ class VoteServiceTest {
         final VoteCreateRequest voteCreateRequest = new VoteCreateRequest(NO);
         MemberDetails shareHolderDetails = createShareHolderDetails();
         final Issue issue = createIssue(1L, LIMITED, CLOSE, LocalDateTime.now().minusDays(2L), LocalDateTime.now().minusDays(1L), 3, 1, 2);
-        given(issueRepository.findWithAgendaByIdSelectForUpdate(issueId)).willReturn(Optional.of(issue));
         given(memberRepository.findByEmail(shareHolderDetails.getEmail())).willReturn(Optional.of(createShareHolder(1L, 3)));
+        given(issueRepository.findWithAgendaByIdSelectForUpdate(issueId)).willReturn(Optional.of(issue));
 
         // when
         Throwable t = catchThrowable(() -> sut.vote(shareHolderDetails, voteCreateRequest, issueId));
@@ -120,8 +120,8 @@ class VoteServiceTest {
         final VoteCreateRequest voteCreateRequest = new VoteCreateRequest(NO);
         MemberDetails shareHolderDetails = createShareHolderDetails();
         final Issue issue = createIssue(1L, LIMITED, OPEN, LocalDateTime.now().minusDays(2L), LocalDateTime.now().minusDays(1L), 3, 1, 2);
-        given(issueRepository.findWithAgendaByIdSelectForUpdate(issueId)).willReturn(Optional.of(issue));
         given(memberRepository.findByEmail(shareHolderDetails.getEmail())).willReturn(Optional.of(createShareHolder(1L, 3)));
+        given(issueRepository.findWithAgendaByIdSelectForUpdate(issueId)).willReturn(Optional.of(issue));
 
         // when
         Throwable t = catchThrowable(() -> sut.vote(shareHolderDetails, voteCreateRequest, issueId));
@@ -142,8 +142,8 @@ class VoteServiceTest {
         MemberDetails shareHolderDetails = createShareHolderDetails();
         final Member shareHolder = createShareHolder(1L, 3);
         final Issue issue = createIssue(1L, LIMITED, OPEN, LocalDateTime.now().minusDays(2L), LocalDateTime.now().plusDays(1L), 3, 1, 2);
-        given(issueRepository.findWithAgendaByIdSelectForUpdate(issueId)).willReturn(Optional.of(issue));
         given(memberRepository.findByEmail(shareHolderDetails.getEmail())).willReturn(Optional.of(shareHolder));
+        given(issueRepository.findWithAgendaByIdSelectForUpdate(issueId)).willReturn(Optional.of(issue));
         given(voteRepository.save(any(Vote.class))).willReturn(createVote(1L, NO, 3, issue, shareHolder));
 
         // when
