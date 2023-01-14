@@ -23,12 +23,16 @@ public class AgendaRepositoryCustomImpl implements AgendaRepositoryCustom {
 
     @Override
     public Page<Agenda> findWithoutAgendaStatus(final Pageable pageable) {
-        final List<Agenda> contents = jpaQueryFactory.selectFrom(agenda)
-                .leftJoin(agenda.issue, issue).fetchJoin()
+        final List<Long> ids = jpaQueryFactory.select(agenda.id)
+                .from(agenda)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
+        final List<Agenda> contents = jpaQueryFactory.selectFrom(agenda)
+                .leftJoin(agenda.issue, issue).fetchJoin()
+                .where(agenda.id.in(ids))
+                .fetch();
 
         final JPAQuery<Long> countQuery = jpaQueryFactory.select(agenda.count()).from(agenda);
 
@@ -37,13 +41,17 @@ public class AgendaRepositoryCustomImpl implements AgendaRepositoryCustom {
 
     @Override
     public Page<Agenda> findWithAgendaStatus(final AgendaStatus agendaStatus, final Pageable pageable) {
-        final List<Agenda> contents = jpaQueryFactory.selectFrom(agenda)
-                .leftJoin(agenda.issue, issue).fetchJoin()
+        final List<Long> ids = jpaQueryFactory.select(agenda.id)
+                .from(agenda)
                 .where(agenda.agendaStatus.eq(agendaStatus))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
+        final List<Agenda> contents = jpaQueryFactory.selectFrom(agenda)
+                .leftJoin(agenda.issue, issue).fetchJoin()
+                .where(agenda.id.in(ids))
+                .fetch();
 
         final JPAQuery<Long> countQuery = jpaQueryFactory.select(agenda.count()).from(agenda).where(agenda.agendaStatus.eq(agendaStatus));
 
