@@ -5,6 +5,7 @@ import gabia.jaime.voting.domain.issue.entity.Issue;
 import gabia.jaime.voting.domain.issue.reposioty.IssueRepository;
 import gabia.jaime.voting.domain.member.entity.Member;
 import gabia.jaime.voting.domain.member.repository.MemberRepository;
+import gabia.jaime.voting.domain.vote.dto.response.VoteCreateResponse;
 import gabia.jaime.voting.domain.vote.entity.Vote;
 import gabia.jaime.voting.domain.vote.repository.VoteRepository;
 import gabia.jaime.voting.global.exception.forbidden.AdminCanNotVoteException;
@@ -39,13 +40,21 @@ public class VoteService {
     }
 
     @Transactional
-    public Long vote(final MemberDetails memberDetails, final VoteCreateRequest voteCreateRequest, final Long issueId) {
+    public VoteCreateResponse vote(final MemberDetails memberDetails, final VoteCreateRequest voteCreateRequest, final Long issueId) {
         // 비관적 락
         final Issue issue = findIssueWithAgendaSelectForUpdate(issueId);
         final Member member = findMember(memberDetails.getEmail());
 
         // OPEN 된 이슈와 동시에 주주만 투표할 수 있다.
         validateIssue(issue);
+
+        // 종료 시간 이후에 투표를 진행하면 상태값을 변경한다.
+        // TODO: 리팩 토링 ..
+        // 이렇게 되면 트랜잭션은 반영이 되지만, 예외처리를 올바르게 하지 않은 것 같다.
+        if (issue.getEndAt().isBefore(LocalDateTime.now())) {
+            issue.close();
+            return VoteCreateResponse.fail();
+        }
         validateVoter(member);
         validateAlreadyVote(issue, member);
 
@@ -59,23 +68,19 @@ public class VoteService {
                 issue.close();
             }
 
-            return voteRepository.save(Vote.of(voteCreateRequest.getVoteType(), voteCount, issue, member)).getId();
+            Long savedId = voteRepository.save(Vote.of(voteCreateRequest.getVoteType(), voteCount, issue, member)).getId();
+            return VoteCreateResponse.success(savedId);
         }
 
         // 제한이 없는 투표
         issue.addVoteCount(voteCreateRequest.getVoteType(), member.getVoteRightCount());
-        return voteRepository.save(Vote.of(voteCreateRequest.getVoteType(), member.getVoteRightCount(), issue, member))
-                .getId();
+        Long savedId = voteRepository.save(
+                Vote.of(voteCreateRequest.getVoteType(), member.getVoteRightCount(), issue, member)).getId();
+        return VoteCreateResponse.success(savedId);
     }
 
     private void validateIssue(final Issue issue) {
         if (issue.getIssueStatus() == CLOSE) {
-            throw new ClosedIssueException();
-        }
-
-        if (issue.getEndAt().isBefore(LocalDateTime.now())) {
-            // TODO: 트랜잭션 롤백되어서 반영이 안됨!
-            // issue.close();
             throw new ClosedIssueException();
         }
     }
