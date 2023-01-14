@@ -18,6 +18,9 @@ spring:
   sql:
     init:
       mode: always
+#  batch:
+#    jdbc:
+#      initialize-schema: always
 
 security:
   jwt:
