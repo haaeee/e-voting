@@ -15,6 +15,7 @@ import gabia.jaime.voting.domain.member.entity.Member;
 import gabia.jaime.voting.domain.member.entity.Role;
 import gabia.jaime.voting.domain.member.repository.MemberRepository;
 import gabia.jaime.voting.global.exception.conflict.BeforeIssueException;
+import gabia.jaime.voting.global.exception.conflict.InvalidDurationException;
 import gabia.jaime.voting.global.exception.conflict.NotPendingAgendaException;
 import gabia.jaime.voting.global.exception.forbidden.AdminForbiddenException;
 import gabia.jaime.voting.global.exception.notfound.AgendaNotFoundException;
@@ -100,8 +101,12 @@ public class AgendaAdminService {
     }
 
     private void validateTime(final LocalDateTime startAt, final LocalDateTime endAt) {
-        // assert 구문
-        assert !endAt.isEqual(startAt) && !endAt.isAfter(startAt);
+        if (!endAt.isAfter(LocalDateTime.now())) {
+            throw new InvalidDurationException();
+        }
+        if (startAt.isEqual(endAt) || startAt.isAfter(endAt)) {
+            throw new InvalidDurationException();
+        }
     }
 
     private Member findMember(final String email) {
