@@ -8,6 +8,7 @@ import gabia.jaime.voting.domain.issue.entity.IssueType;
 import gabia.jaime.voting.domain.issue.reposioty.IssueRepository;
 import gabia.jaime.voting.domain.member.entity.Member;
 import gabia.jaime.voting.domain.member.repository.MemberRepository;
+import gabia.jaime.voting.domain.vote.dto.response.VoteCreateResponse;
 import gabia.jaime.voting.domain.vote.entity.Vote;
 import gabia.jaime.voting.domain.vote.entity.VoteType;
 import gabia.jaime.voting.domain.vote.repository.VoteRepository;
@@ -37,10 +38,11 @@ import static gabia.jaime.voting.domain.vote.entity.VoteType.NO;
 import static gabia.jaime.voting.domain.vote.entity.VoteType.YES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import static org.mockito.BDDMockito.*;
 
-@DisplayName("투표 생성 및 조회")
+@DisplayName("투표 생성")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @ExtendWith(MockitoExtension.class)
 class VoteServiceTest {
@@ -124,12 +126,15 @@ class VoteServiceTest {
         given(issueRepository.findWithAgendaByIdSelectForUpdate(issueId)).willReturn(Optional.of(issue));
 
         // when
-        Throwable t = catchThrowable(() -> sut.vote(shareHolderDetails, voteCreateRequest, issueId));
+        VoteCreateResponse response = sut.vote(shareHolderDetails, voteCreateRequest, issueId);
 
         // then
-        assertThat(t).isInstanceOf(ClosedIssueException.class);
-        assertThat(issue.getIssueStatus()).isEqualTo(CLOSE);
-        assertThat(issue.getAgenda().getAgendaStatus()).isEqualTo(COMPLETED);
+        assertAll(
+                () -> assertThat(response.getId()).isNull(),
+                () -> assertThat(response.getMessage()).isEqualTo("투표가 반영되지 않았습니다."),
+                () -> assertThat(issue.getIssueStatus()).isEqualTo(CLOSE),
+                () -> assertThat(issue.getAgenda().getAgendaStatus()).isEqualTo(COMPLETED)
+        );
         then(issueRepository).should().findWithAgendaByIdSelectForUpdate(issueId);
         then(memberRepository).should().findByEmail(shareHolderDetails.getEmail());
     }
@@ -147,10 +152,10 @@ class VoteServiceTest {
         given(voteRepository.save(any(Vote.class))).willReturn(createVote(1L, NO, 3, issue, shareHolder));
 
         // when
-        final Long savedId = sut.vote(shareHolderDetails, voteCreateRequest, issueId);
+        VoteCreateResponse response = sut.vote(shareHolderDetails, voteCreateRequest, issueId);
 
         // then
-        assertThat(savedId).isEqualTo(1L);
+        assertThat(response.getId()).isEqualTo(1L);
         assertThat(issue.getNoCount()).isEqualTo(1 + 3);
         then(issueRepository).should().findWithAgendaByIdSelectForUpdate(issueId);
         then(memberRepository).should().findByEmail(shareHolderDetails.getEmail());
