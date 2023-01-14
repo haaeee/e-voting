@@ -14,4 +14,9 @@ public interface IssueRepository extends JpaRepository<Issue, Long> {
     @Query("select i from Issue i join fetch i.agenda where i.id = :id")
     Optional<Issue> findWithAgendaByIdSelectForUpdate(Long id);
 
+    @Query("select i from Issue i join fetch i.agenda where i.id = :id")
+    Optional<Issue> findWithAgendaAndVotesById(Long id);
+
+    @Query("select i from Issue i join fetch i.agenda where i.id = :id")
+    Optional<Issue> findWithAgendaById(Long id);
 }
