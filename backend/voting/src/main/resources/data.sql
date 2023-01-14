@@ -36,11 +36,15 @@ values ('안건2', '일주일에 2번의 회의를 진행하려고합니다.', '
 ;
 
 insert into agenda (title, content, agenda_status, member_id, created_at, modified_at)
-values ('안건3', '내년에 계획을 오늘 수립하는 것은 어떨까요.', 'PENDING', 6, now(), now())
+values ('안건3', '내년에 계획을 오늘 수립하는 것은 어떨까요.', 'RUNNING', 6, now(), now())
 ;
 
 insert into agenda (title, content, agenda_status, member_id, created_at, modified_at)
 values ('안건4', '종료된 안건 입니다.', 'COMPLETED', 6, now(), now())
+;
+
+insert into agenda (title, content, agenda_status, member_id, created_at, modified_at)
+values ('안건5', '보류된 안건 입니다.', 'PENDING', 6, now(), now())
 ;
 
 
