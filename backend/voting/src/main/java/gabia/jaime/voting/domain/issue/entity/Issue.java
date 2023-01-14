@@ -58,7 +58,7 @@ public class Issue extends BaseEntity {
 
     @ToString.Exclude
     @OrderBy("createdAt DESC")
-    @OneToMany(mappedBy = "issue", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "issue", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Vote> votes = new LinkedHashSet<>();
 
     protected Issue() {
@@ -114,6 +114,10 @@ public class Issue extends BaseEntity {
         else if (voteType == GIVE_UP) {
             this.giveUpCount += voteCount;
         }
+    }
+
+    public void addVote(Vote vote) {
+        this.getVotes().add(vote);
     }
 
     @Override
