@@ -5,6 +5,7 @@ import gabia.jaime.voting.domain.member.dto.response.MemberLoginResponse;
 import gabia.jaime.voting.domain.member.entity.Member;
 import gabia.jaime.voting.domain.member.repository.MemberRepository;
 import gabia.jaime.voting.global.exception.conflict.DuplicatedEmailException;
+import gabia.jaime.voting.global.exception.conflict.DuplicatedNicknameException;
 import gabia.jaime.voting.global.exception.conflict.PasswordInvalidException;
 import gabia.jaime.voting.global.exception.notfound.MemberNotFoundException;
 import gabia.jaime.voting.global.security.JwtTokenProvider;
@@ -57,6 +58,7 @@ public class AuthService {
     @Transactional
     public MemberJoinResponse join(final String email, final String password, final String nickname, Integer voteRightCount) {
         validateEmail(email);
+        validateNickname(nickname);
         voteRightCount = checkVoteRightCount(voteRightCount);
 
         Member member = memberRepository.save(Member.createShareHolder(email, passwordEncoder.encode(password), nickname, voteRightCount));
@@ -73,6 +75,7 @@ public class AuthService {
     @Transactional
     public MemberJoinResponse joinAdmin(final String email, final String password, final String nickname) {
         validateEmail(email);
+        validateNickname(nickname);
 
         final Member adminMember = memberRepository.save(Member.createAdministrator(email, password, nickname));
 
@@ -86,6 +89,15 @@ public class AuthService {
     private void validateEmail(final String email) {
         memberRepository.findByEmail(email).ifPresent(it -> {
             throw new DuplicatedEmailException();
+        });
+    }
+
+    /**
+     * nickname 중복 체크 메서드
+     */
+    private void validateNickname(final String nickname) {
+        memberRepository.findByNickname(nickname).ifPresent(it -> {
+            throw new DuplicatedNicknameException();
         });
     }
 
