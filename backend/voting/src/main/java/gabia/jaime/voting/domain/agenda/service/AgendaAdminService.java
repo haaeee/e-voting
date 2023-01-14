@@ -1,8 +1,11 @@
 package gabia.jaime.voting.domain.agenda.service;
 
+import static gabia.jaime.voting.domain.agenda.entity.AgendaStatus.PENDING;
 import static gabia.jaime.voting.domain.member.entity.Role.ROLE_ADMIN;
 
 import gabia.jaime.voting.domain.agenda.dto.request.AgendaCreateRequest;
+import gabia.jaime.voting.domain.agenda.dto.request.AgendaToIssueRequest;
+import gabia.jaime.voting.domain.agenda.dto.response.AgendaResponse;
 import gabia.jaime.voting.domain.agenda.entity.Agenda;
 import gabia.jaime.voting.domain.agenda.entity.AgendaStatus;
 import gabia.jaime.voting.domain.agenda.repository.AgendaRepository;
@@ -12,9 +15,12 @@ import gabia.jaime.voting.domain.member.entity.Member;
 import gabia.jaime.voting.domain.member.entity.Role;
 import gabia.jaime.voting.domain.member.repository.MemberRepository;
 import gabia.jaime.voting.global.exception.conflict.BeforeIssueException;
+import gabia.jaime.voting.global.exception.conflict.NotPendingAgendaException;
 import gabia.jaime.voting.global.exception.forbidden.AdminForbiddenException;
+import gabia.jaime.voting.global.exception.notfound.AgendaNotFoundException;
 import gabia.jaime.voting.global.exception.notfound.MemberNotFoundException;
 import gabia.jaime.voting.global.security.MemberDetails;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +44,7 @@ public class AgendaAdminService {
 
         final Member adminMember = findMember(memberDetails.getEmail());
 
-        // Completed는 생성할 수 없다.
+        // Completed 는 생성할 수 없다.
         if (agendaCreateRequest.getAgendaStatus() == AgendaStatus.COMPLETED) {
             throw new BeforeIssueException();
         }
@@ -51,6 +57,8 @@ public class AgendaAdminService {
         }
 
         // Running Agenda 생성
+        validateTime(agendaCreateRequest.getStartAt(),  agendaCreateRequest.getEndAt());
+
         final Agenda runningAgenda =
                 Agenda.of(agendaCreateRequest.getTitle(), agendaCreateRequest.getContent(), agendaCreateRequest.getAgendaStatus(), adminMember);
         final Issue runningIssue =
@@ -62,14 +70,48 @@ public class AgendaAdminService {
         return runningAgenda.getId();
     }
 
+    // Only Pending => ISSUE 화
+    @Transactional
+    public AgendaResponse issue(final MemberDetails memberDetails, final AgendaToIssueRequest request, final Long agendaId) {
+        validateAdmin(memberDetails.getRole());
+        validateTime(request.getStartAt(), request.getEndAt());
+
+        Agenda agenda = findAgenda(agendaId);
+        validateAgenda(agenda);
+
+        // issue 생성
+        Issue issue = Issue.of(agenda, request.getIssueType(), request.getStartAt(), request.getEndAt());
+        issueRepository.save(issue);
+        agenda.changeRunningStatus(issue);
+
+        return AgendaResponse.from(agenda);
+    }
+
     private void validateAdmin(final Role role) {
         if (role != ROLE_ADMIN) {
             throw new AdminForbiddenException();
         }
     }
 
+    private void validateAgenda(final Agenda agenda) {
+        if (agenda.getAgendaStatus() != PENDING) {
+            throw new NotPendingAgendaException();
+        }
+    }
+
+    private void validateTime(final LocalDateTime startAt, final LocalDateTime endAt) {
+        // assert 구문
+        assert !endAt.isEqual(startAt) && !endAt.isAfter(startAt);
+    }
+
     private Member findMember(final String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
     }
+
+    private Agenda findAgenda(final Long id) {
+        return agendaRepository.findById(id)
+                .orElseThrow(AgendaNotFoundException::new);
+    }
+
 }

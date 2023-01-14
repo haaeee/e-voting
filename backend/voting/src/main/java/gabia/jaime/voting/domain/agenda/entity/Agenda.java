@@ -30,7 +30,7 @@ public class Agenda extends BaseEntity {
     @Column(name = "agenda_status", nullable = false)
     private AgendaStatus agendaStatus;
 
-    @OneToOne(mappedBy = "agenda")
+    @OneToOne(mappedBy = "agenda", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Issue issue;
 
     @ManyToOne(fetch = FetchType.LAZY)

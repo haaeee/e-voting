@@ -19,6 +19,7 @@ public class AgendaResponse {
     private final String content;
 
     private final AgendaStatus agendaStatus;
+
     private final Long issueId;
 
     private final Long adminId;
