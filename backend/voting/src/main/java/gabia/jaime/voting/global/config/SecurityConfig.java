@@ -7,6 +7,7 @@ import gabia.jaime.voting.global.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -35,10 +36,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                        .mvcMatchers(
-                                "/api/*/members/join",
-                                "/api/*/members/login").permitAll()
-                        .antMatchers("/api/**/agendas", "/api/**/votes", "api/**/issues/").authenticated()
+                        .antMatchers(HttpMethod.POST, "/api/*/members", "/api/*/members/login").permitAll()
+                        .antMatchers("/api/*/agendas", "/api/*/votes", "api/*/issues/").authenticated()
                 )
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
