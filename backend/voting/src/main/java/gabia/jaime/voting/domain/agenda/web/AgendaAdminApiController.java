@@ -44,8 +44,10 @@ public class AgendaAdminApiController {
     }
 
     @DeleteMapping("/api/v1/agendas/{id}")
-    public void delete(@PathVariable("id") Long agendaId) {
-        agendaAdminService.delete(agendaId);
+    public void delete(Authentication authentication, @PathVariable("id") Long agendaId) {
+        final MemberDetails memberDetails = ClassUtils.getSafeCastInstance(authentication.getPrincipal(),
+                MemberDetails.class);
+        agendaAdminService.delete(memberDetails, agendaId);
     }
 
 }
