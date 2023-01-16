@@ -32,7 +32,7 @@ public class Agenda extends BaseEntity {
     private AgendaStatus agendaStatus;
 
     @Setter
-    @OneToOne(mappedBy = "agenda", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(mappedBy = "agenda", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private Issue issue;
 
     @ManyToOne(fetch = FetchType.LAZY)
