@@ -14,6 +14,7 @@ import gabia.jaime.voting.global.exception.conflict.ClosedIssueException;
 import gabia.jaime.voting.global.exception.notfound.IssueNotFoundException;
 import gabia.jaime.voting.global.exception.notfound.MemberNotFoundException;
 import gabia.jaime.voting.global.security.MemberDetails;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import static gabia.jaime.voting.domain.issue.entity.IssueStatus.CLOSE;
 import static gabia.jaime.voting.domain.issue.entity.IssueType.LIMITED;
 import static gabia.jaime.voting.domain.member.entity.Role.ROLE_SHAREHOLDER;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class VoteService {
@@ -66,9 +68,12 @@ public class VoteService {
 
             if (canCloseIssue(issue)) {
                 issue.close();
+                return VoteCreateResponse.fail();
             }
 
-            Long savedId = voteRepository.save(Vote.of(voteCreateRequest.getVoteType(), voteCount, issue, member)).getId();
+            final Vote vote = Vote.of(voteCreateRequest.getVoteType(), voteCount, issue, member);
+            Long savedId = voteRepository.save(vote).getId();
+            log.info("투표 ID: {}, 사용자 ID: {}, 현안 ID: {}", savedId, member.getId(), issue.getId());
             return VoteCreateResponse.success(savedId);
         }
 
@@ -76,6 +81,7 @@ public class VoteService {
         issue.addVoteCount(voteCreateRequest.getVoteType(), member.getVoteRightCount());
         Long savedId = voteRepository.save(
                 Vote.of(voteCreateRequest.getVoteType(), member.getVoteRightCount(), issue, member)).getId();
+        log.info("투표 ID: {}, 사용자 ID: {}, 현안 ID: {}", savedId, member.getId(), issue.getId());
         return VoteCreateResponse.success(savedId);
     }
 
