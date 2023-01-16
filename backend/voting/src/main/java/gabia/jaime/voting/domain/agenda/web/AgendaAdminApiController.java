@@ -10,11 +10,7 @@ import gabia.jaime.voting.global.util.ClassUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
@@ -45,6 +41,11 @@ public class AgendaAdminApiController {
                 MemberDetails.class);
         AgendaResponse response = agendaAdminService.issue(memberDetails, agendaToIssueRequest, agendaId);
         return ResponseEntity.ok(Result.createSuccessResult(response));
+    }
+
+    @DeleteMapping("/api/v1/agendas/{id}")
+    public void delete(@PathVariable("id") Long agendaId) {
+        agendaAdminService.delete(agendaId);
     }
 
 }
