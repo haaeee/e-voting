@@ -19,6 +19,7 @@ import gabia.jaime.voting.global.exception.conflict.InvalidDurationException;
 import gabia.jaime.voting.global.exception.conflict.InvalidEndAtException;
 import gabia.jaime.voting.global.exception.conflict.NotPendingAgendaException;
 import gabia.jaime.voting.global.exception.forbidden.AdminForbiddenException;
+import gabia.jaime.voting.global.exception.forbidden.ForbiddenException;
 import gabia.jaime.voting.global.exception.notfound.AgendaNotFoundException;
 import gabia.jaime.voting.global.exception.notfound.MemberNotFoundException;
 import gabia.jaime.voting.global.security.MemberDetails;
@@ -90,8 +91,12 @@ public class AgendaAdminService {
     }
 
     @Transactional
-    public void delete( final Long agendaId) {
+    public void delete(final MemberDetails memberDetails, final Long agendaId) {
         final Agenda agenda = findAgenda(agendaId);
+        final Member member = findMember(memberDetails.getEmail());
+        if (!agenda.getMember().getId().equals(member.getId())) {
+            throw new ForbiddenException("생성하신 안건이 아닙니다.");
+        }
         agendaRepository.delete(agenda);
     }
 
