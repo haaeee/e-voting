@@ -89,6 +89,12 @@ public class AgendaAdminService {
         return AgendaResponse.from(agenda);
     }
 
+    @Transactional
+    public void delete( final Long agendaId) {
+        final Agenda agenda = findAgenda(agendaId);
+        agendaRepository.delete(agenda);
+    }
+
     private void validateAdmin(final Role role) {
         if (role != ROLE_ADMIN) {
             throw new AdminForbiddenException();
