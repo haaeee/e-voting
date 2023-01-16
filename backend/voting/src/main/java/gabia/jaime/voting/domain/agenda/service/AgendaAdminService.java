@@ -16,6 +16,7 @@ import gabia.jaime.voting.domain.member.entity.Role;
 import gabia.jaime.voting.domain.member.repository.MemberRepository;
 import gabia.jaime.voting.global.exception.conflict.BeforeIssueException;
 import gabia.jaime.voting.global.exception.conflict.InvalidDurationException;
+import gabia.jaime.voting.global.exception.conflict.InvalidEndAtException;
 import gabia.jaime.voting.global.exception.conflict.NotPendingAgendaException;
 import gabia.jaime.voting.global.exception.forbidden.AdminForbiddenException;
 import gabia.jaime.voting.global.exception.notfound.AgendaNotFoundException;
@@ -40,7 +41,7 @@ public class AgendaAdminService {
     }
 
     @Transactional
-    public Long save(final MemberDetails memberDetails, final AgendaCreateRequest agendaCreateRequest) {
+    public AgendaResponse save(final MemberDetails memberDetails, final AgendaCreateRequest agendaCreateRequest) {
         validateAdmin(memberDetails.getRole());
 
         final Member adminMember = findMember(memberDetails.getEmail());
@@ -54,7 +55,7 @@ public class AgendaAdminService {
         if (agendaCreateRequest.getAgendaStatus() == AgendaStatus.PENDING) {
             final Agenda pendingAgenda =
                     Agenda.of(agendaCreateRequest.getTitle(), agendaCreateRequest.getContent(), agendaCreateRequest.getAgendaStatus(), adminMember);
-            return agendaRepository.save(pendingAgenda).getId();
+            return AgendaResponse.from(agendaRepository.save(pendingAgenda));
         }
 
         // Running Agenda 생성
@@ -65,10 +66,10 @@ public class AgendaAdminService {
         final Issue runningIssue =
                 Issue.of(runningAgenda, agendaCreateRequest.getIssueType(), agendaCreateRequest.getStartAt(), agendaCreateRequest.getEndAt());
 
-        agendaRepository.save(runningAgenda);
-        issueRepository.save(runningIssue);
+        final Agenda agenda = agendaRepository.save(runningAgenda);
+        agenda.setIssue(runningIssue);
 
-        return runningAgenda.getId();
+        return AgendaResponse.from(agenda);
     }
 
     // Only Pending => ISSUE 화
@@ -102,7 +103,7 @@ public class AgendaAdminService {
 
     private void validateTime(final LocalDateTime startAt, final LocalDateTime endAt) {
         if (!endAt.isAfter(LocalDateTime.now())) {
-            throw new InvalidDurationException();
+            throw new InvalidEndAtException();
         }
         if (startAt.isEqual(endAt) || startAt.isAfter(endAt)) {
             throw new InvalidDurationException();

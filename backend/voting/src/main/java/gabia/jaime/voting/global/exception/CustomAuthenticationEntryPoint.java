@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
+    public static final String INVALID_TOKEN_MESSAGE = "올바르지 않은 토큰입니다.";
+
     private final ObjectMapper mapper;
 
     public CustomAuthenticationEntryPoint(final ObjectMapper mapper) {
@@ -25,9 +27,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(final HttpServletRequest request, final HttpServletResponse response,
                          final AuthenticationException authException) throws IOException, ServletException {
-
+        response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().write(mapper.writeValueAsString(Result.createErrorResult("인증과정에서 오류가 발생하였습니다.")));
+        response.getWriter().write(mapper.writeValueAsString(Result.createErrorResult(INVALID_TOKEN_MESSAGE)));
     }
 }

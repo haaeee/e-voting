@@ -16,9 +16,9 @@ public class WithMockCustomShareHolderSecurityContextFactory implements WithSecu
 
     public SecurityContext createSecurityContext(final WithMockShareHolder annotation) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        List<GrantedAuthority> grantedAuthorities = List.of(new SimpleGrantedAuthority("ROLE_SHAREHOLDER"));
+        List<GrantedAuthority> grantedAuthorities = List.of(new SimpleGrantedAuthority(ROLE_SHAREHOLDER.name()));
         MemberDetails memberDetails = MemberDetails.builder()
-                .email("shareholder@email.com")
+                .email("member1@email.com")
                 .role(ROLE_SHAREHOLDER)
                 .build();
 

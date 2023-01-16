@@ -7,6 +7,7 @@ import gabia.jaime.voting.domain.agenda.service.AgendaAdminService;
 import gabia.jaime.voting.global.dto.Result;
 import gabia.jaime.voting.global.security.MemberDetails;
 import gabia.jaime.voting.global.util.ClassUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -27,13 +28,13 @@ public class AgendaAdminApiController {
     }
 
     @PostMapping("/api/v1/agendas")
-    public ResponseEntity<Void> create(@RequestBody AgendaCreateRequest agendaCreateRequest,
+    public ResponseEntity<Result> create(@RequestBody AgendaCreateRequest agendaCreateRequest,
                                        Authentication authentication) {
         final MemberDetails memberDetails = ClassUtils.getSafeCastInstance(authentication.getPrincipal(),
                 MemberDetails.class);
-        final Long savedId = agendaAdminService.save(memberDetails, agendaCreateRequest);
-        return ResponseEntity.created(URI.create("/api/v1/agendas/" + savedId))
-                .build();
+        final AgendaResponse response = agendaAdminService.save(memberDetails, agendaCreateRequest);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Result.createSuccessResult(response));
     }
 
     // TODO: PATCH VS POST (issue) 생성도 하기에

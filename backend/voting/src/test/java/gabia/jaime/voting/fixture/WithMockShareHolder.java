@@ -9,8 +9,8 @@ import java.lang.annotation.RetentionPolicy;
 @WithSecurityContext(factory = WithMockCustomShareHolderSecurityContextFactory.class)
 public @interface WithMockShareHolder {
 
-    String username() default "shareholder@email.com";
+    String username() default "member1@email.com";
 
-    String name() default "shareholder@email.com";
+    String name() default "member1@email.com";
 }
 

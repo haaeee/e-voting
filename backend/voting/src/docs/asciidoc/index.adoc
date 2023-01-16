@@ -1,0 +1,56 @@
+= G사 주주총회 전자투표 시스템 API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[CLIENT-API]]
+== Client API (사용자 API)
+
+[[Client-주주-회원가입]]
+=== 주주 회원가입
+operation::shareholder-join[]
+
+[[Client-사용자-로그인]]
+=== 사용자 로그인
+operation::member-login[]
+
+[[Agenda-API]]
+== Agenda API (안건 API)
+
+[[Agenda-안건-등록]]
+=== 안건 등록 (PENDING)
+operation::agenda-create-without-Issue[]
+
+=== 안건 등록 (RUNNING)
+operation::agenda-create-with-issue[]
+
+[[Agenda-안건-목록-조회-With-AgendaStatus]]
+=== 안건 상태값과 함께 목록 조회
+operation::agenda-search-with-agendastatus[]
+
+[[Agenda-안건-목록-조회-WithOut-AgendaStatus]]
+=== 안건 상태값과 없이 목록 조회
+operation::agenda-search-without-agendaStatus[]
+
+|===
+
+|===
+[[ISSUE-VOTE-API]]
+== Vote API (투표 API)
+
+[[Vote-투표]]
+=== 투표 하기
+operation::vote-create[]
+
+[[ISSUE-조회-SHAREHOLDER]]
+=== 현안 조회(SHAREHOLDER)
+operation::vote-search-shareholder[]
+
+
+[[ISSUE-조회-ADMIN]]
+=== 현안 조회(ADMIN)
+operation::vote-search-admin[]
+
