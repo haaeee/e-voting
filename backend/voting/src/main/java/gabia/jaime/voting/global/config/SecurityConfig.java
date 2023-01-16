@@ -1,5 +1,6 @@
 package gabia.jaime.voting.global.config;
 
+import gabia.jaime.voting.domain.member.entity.Role;
 import gabia.jaime.voting.domain.member.service.AuthService;
 import gabia.jaime.voting.global.exception.CustomAuthenticationEntryPoint;
 import gabia.jaime.voting.global.security.JwtTokenFilter;
@@ -13,8 +14,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static gabia.jaime.voting.domain.member.entity.Role.ROLE_ADMIN;
+
 @Configuration
 public class SecurityConfig {
+
+    private static final String ADMIN = "ADMIN";
+    private static final String SHAREHOLDER = "SHAREHOLDER";
 
     private final AuthService authService;
     private final String secretKey;
@@ -37,7 +43,13 @@ public class SecurityConfig {
         return http.csrf().disable()
                 .authorizeHttpRequests(auth -> auth
                         .antMatchers(HttpMethod.POST, "/api/*/members", "/api/*/members/login").permitAll()
-                        .antMatchers("/api/*/agendas", "/api/*/votes", "api/*/issues/").authenticated()
+                        .antMatchers(HttpMethod.POST, "/api/*/agendas").hasRole(ADMIN)
+                        .antMatchers(HttpMethod.DELETE, "/api/*/agendas/*").hasRole(ADMIN)
+                        .antMatchers(HttpMethod.PATCH, "/api/*/agendas/*").hasRole(ADMIN)
+                        .antMatchers(HttpMethod.POST, "/api/*/issues/*").hasRole(SHAREHOLDER)
+                        .antMatchers(HttpMethod.GET, "/api/*/issues/*").authenticated()
+                        .antMatchers(HttpMethod.GET, "/api/*/agendas").authenticated()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
