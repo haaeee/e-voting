@@ -5,6 +5,7 @@ import gabia.jaime.voting.domain.member.entity.Member;
 import gabia.jaime.voting.global.entity.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
@@ -30,6 +31,7 @@ public class Agenda extends BaseEntity {
     @Column(name = "agenda_status", nullable = false)
     private AgendaStatus agendaStatus;
 
+    @Setter
     @OneToOne(mappedBy = "agenda", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Issue issue;
 

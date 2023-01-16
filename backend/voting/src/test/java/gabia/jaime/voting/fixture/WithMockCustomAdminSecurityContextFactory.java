@@ -19,7 +19,7 @@ public class WithMockCustomAdminSecurityContextFactory implements WithSecurityCo
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         List<GrantedAuthority> grantedAuthorities = List.of(new SimpleGrantedAuthority(ROLE_ADMIN.name()));
         MemberDetails memberDetails = MemberDetails.builder()
-                .email("admin@email.com")
+                .email("admin1@email.com")
                 .role(ROLE_ADMIN)
                 .build();
 

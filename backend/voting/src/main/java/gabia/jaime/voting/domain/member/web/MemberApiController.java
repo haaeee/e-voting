@@ -23,7 +23,7 @@ public class MemberApiController {
         this.authService = authService;
     }
 
-    @PostMapping("/join")
+    @PostMapping
     public ResponseEntity join(@RequestBody MemberJoinRequest request) {
         MemberJoinResponse response = authService.join(request.getEmail(), request.getPassword(), request.getNickname(), request.getVoteRightCount());
 
