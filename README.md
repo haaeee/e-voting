@@ -660,9 +660,9 @@ JPA는 데이터베이스 트랜잭션 격리 수준을 READ COMMITTED 정도로
 
 ## Reference
 
-- [발생할 수 있는 문제 레퍼런스](https://shorturl.at/iOSTU)
-- [낙관적 락 예시](https://shorturl.at/hjl34)
-- [비관적 락 예시](https://shorturl.at/hr246)
+- [발생할 수 있는 문제 레퍼런스](https://learn.microsoft.com/ko-kr/sql/odbc/reference/develop-app/transaction-isolation-levels?view=sql-server-ver16)
+- [낙관적 락 예시](https://velog.io/@znftm97/%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0-V1-%EB%82%99%EA%B4%80%EC%A0%81-%EB%9D%BDOptimisitc-Lock-feat.%EB%8D%B0%EB%93%9C%EB%9D%BD-%EC%B2%AB-%EB%A7%8C%EB%82%A8)
+- [비관적 락 예시](https://velog.io/@znftm97/%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0-V2-%EB%B9%84%EA%B4%80%EC%A0%81-%EB%9D%BDPessimistic-Lock)
 - [요약된 레퍼런스](https://modimodi.tistory.com/55)
 
 </div>
