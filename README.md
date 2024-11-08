@@ -17,7 +17,8 @@
 
 ## ERD
 
-![ERD](https://mentoring-gitlab.gabia.com/mentee/mentee_2023.01/sandbox/jaime-e-voting/uploads/f871ea1bc83606ed60cc5bf816b92891/image.png)
+<img width="916" alt="image" src="https://github.com/user-attachments/assets/25d8f37c-8c3b-4cac-a1a1-dfc5899ac35c">
+
 
 <br/>
 
