@@ -1,21 +1,17 @@
-## 개발 환경
+# 📄 주주총회 전자 투표 시스템
 
-- Java 11
-- Spring Boot 2.7.7
-- Mysql:8.0.31 (docker)
-- querydsl:5.0.0
+안건을 관리하고 투표를 수행할 수 있는 API 서버
 
 <br/>
 
-## 기술 세부 스택
 
-- Spring Web
-- Spring Data JPA
-- MySQL Driver
-- Spring Security (AccessToken 발급)
-    - accessToken을 발급 후 매 요청이 들어올 때마다 이를 검증
-    - 검증된 유저는 Spring Security Context 에 주입 
-    - 이를 통해 Context에 담긴 정보를 통해 인증 및 인가를 구현
+## 사용한 프레임워크 및 라이브러리
+
+<br/><br/>
+
+- Java 17 <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white">
+- Spring Boot 3.0.1, Spring Data JPA, Spring Security <img src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white">  
+- MySQL 8.0.31 <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
 
 <br/>
 
@@ -115,18 +111,6 @@
 
 - metadata: 생성일시, 수정 일시
 ```
-
-<br/>
-
-## API 명세서
-
----
-
-<a target="_blank" href="https://documenter.getpostman.com/view/19374874/2s8ZDR75n4">
-API 명세서</a>
-<br/><br/>
-<a target="_blank" href="https://haaeee.gitlab.io/">
-RESTDOCS를 통한 컨트롤러 테스트 </a>
 
 <br/>
 
